@@ -7,7 +7,7 @@ import { Loader2, LogOut, Plus, Rocket, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
-import { listMyCampaignsFn } from "@/lib/account.functions";
+import { claimCampaignFn, listMyCampaignsFn } from "@/lib/account.functions";
 import { createCampaignFn } from "@/lib/campaign.functions";
 
 export const Route = createFileRoute("/_authenticated/campaigns")({
