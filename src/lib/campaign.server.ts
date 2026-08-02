@@ -81,13 +81,13 @@ function tableFor(kind: "session" | "milestone" | "card") {
   return kind === "session" ? "sessions" : kind === "milestone" ? "milestones" : "cards";
 }
 
-export async function createCampaign(name: string) {
+export async function createCampaign(name: string, ownerId: string) {
   const gm_token = makeToken();
   const player_token = makeToken();
 
   const { data, error } = await supabaseAdmin
     .from("campaigns")
-    .insert({ name: name.trim() || "Untitled Operation", gm_token, player_token })
+    .insert({ name: name.trim() || "Untitled Operation", gm_token, player_token, owner_id: ownerId })
     .select("*")
     .single();
   if (error) throw new Error(error.message);
