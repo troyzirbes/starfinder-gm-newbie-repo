@@ -7,7 +7,7 @@ import { Loader2, LogOut, Plus, Rocket, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
-import { listMyCampaignsFn } from "@/lib/account.functions";
+import { claimCampaignFn, listMyCampaignsFn } from "@/lib/account.functions";
 import { createCampaignFn } from "@/lib/campaign.functions";
 
 export const Route = createFileRoute("/_authenticated/campaigns")({
@@ -36,8 +36,11 @@ function Campaigns() {
   const navigate = useNavigate();
   const list = useServerFn(listMyCampaignsFn);
   const create = useServerFn(createCampaignFn);
+  const claim = useServerFn(claimCampaignFn);
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
+  const [claimLink, setClaimLink] = useState("");
+  const [claimNote, setClaimNote] = useState("");
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["my-campaigns"],
@@ -55,6 +58,28 @@ function Campaigns() {
       refetch();
     }
   }
+
+  async function claimByLink() {
+    const token = claimLink.trim().split("/").pop() ?? "";
+    if (token.length < 6) {
+      setClaimNote("That doesn't look like a GM link.");
+      return;
+    }
+    setClaimNote("");
+    try {
+      const res = await claim({ data: { token } });
+      if (res.ok && res.owned) {
+        setClaimLink("");
+        setClaimNote("Added to your list.");
+        refetch();
+      } else {
+        setClaimNote("That campaign already belongs to another account.");
+      }
+    } catch {
+      setClaimNote("Couldn't find a campaign for that link.");
+    }
+  }
+
 
   async function signOut() {
     await supabase.auth.signOut();
@@ -91,6 +116,28 @@ function Campaigns() {
           Create campaign
         </Button>
       </section>
+
+      <section className="panel mt-3 p-4">
+        <h2 className="text-sm font-semibold">Have an older GM link?</h2>
+        <p className="mt-0.5 text-xs text-muted-foreground">
+          Paste it here to attach that campaign to this account.
+        </p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <Input
+            value={claimLink}
+            onChange={(e) => setClaimLink(e.target.value)}
+            placeholder="https://…/gm/xxxxxxxx"
+            className="min-w-56 flex-1"
+            onKeyDown={(e) => e.key === "Enter" && claimByLink()}
+          />
+          <Button variant="secondary" onClick={claimByLink}>
+            Add to my list
+          </Button>
+        </div>
+        {claimNote ? <p className="mt-2 text-xs text-accent">{claimNote}</p> : null}
+      </section>
+
+
 
       {isLoading ? (
         <div className="flex justify-center py-16">
