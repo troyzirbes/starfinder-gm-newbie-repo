@@ -117,6 +117,28 @@ function Campaigns() {
         </Button>
       </section>
 
+      <section className="panel mt-3 p-4">
+        <h2 className="text-sm font-semibold">Have an older GM link?</h2>
+        <p className="mt-0.5 text-xs text-muted-foreground">
+          Paste it here to attach that campaign to this account.
+        </p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <Input
+            value={claimLink}
+            onChange={(e) => setClaimLink(e.target.value)}
+            placeholder="https://…/gm/xxxxxxxx"
+            className="min-w-56 flex-1"
+            onKeyDown={(e) => e.key === "Enter" && claimByLink()}
+          />
+          <Button variant="secondary" onClick={claimByLink}>
+            Add to my list
+          </Button>
+        </div>
+        {claimNote ? <p className="mt-2 text-xs text-accent">{claimNote}</p> : null}
+      </section>
+
+
+
       {isLoading ? (
         <div className="flex justify-center py-16">
           <Loader2 className="size-6 animate-spin text-primary" />
