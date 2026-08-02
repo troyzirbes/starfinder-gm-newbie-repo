@@ -59,7 +59,7 @@ function PlayerBoard() {
     );
   }
 
-  const { campaign, cards, milestones, recaps } = data;
+  const { campaign, cards, milestones, recaps, intros } = data;
   const grouped = cardTypeOrder
     .map((t) => ({ type: t, items: cards.filter((c) => c.type === t) }))
     .filter((g) => g.items.length > 0);
@@ -82,6 +82,14 @@ function PlayerBoard() {
         </TabsList>
 
         <TabsContent value="board" className="mt-5 space-y-8">
+          {intros.map((s) => (
+            <article key={s.id} className="panel border-primary/40 bg-primary/5 p-4">
+              <span className="label-eyebrow text-primary">Session {s.number} · Briefing</span>
+              <h2 className="mt-1 font-semibold">{s.title}</h2>
+              <p className="mt-2 text-sm leading-relaxed whitespace-pre-wrap">{s.intro}</p>
+            </article>
+          ))}
+
           {grouped.map((g) => {
             const Icon = cardTypeMeta[g.type].icon;
             return (

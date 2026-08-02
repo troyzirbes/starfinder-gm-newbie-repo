@@ -225,7 +225,29 @@ function GmDesk() {
                 </div>
               </div>
 
+              <div className="mt-4 rounded-lg border border-primary/30 bg-primary/5 p-3">
+                <AutoField
+                  label="Read-aloud intro"
+                  value={s.intro}
+                  multiline
+                  rows={4}
+                  hint="The opening everyone hears — read it out at the top of the session"
+                  placeholder={'"Security Team 4, please wake up…"'}
+                  onCommit={(v) => patch("session", s.id, { intro: v })}
+                />
+                <label className="mt-2 flex items-center gap-2 text-sm">
+                  <Checkbox
+                    checked={s.intro_published}
+                    onCheckedChange={(c) => patch("session", s.id, { intro_published: c === true })}
+                  />
+                  <span className="text-muted-foreground">
+                    Show this intro on the player board
+                  </span>
+                </label>
+              </div>
+
               <div className="mt-4 grid gap-4 md:grid-cols-2">
+
                 <AutoField
                   label="Goals for this session"
                   value={s.goals}

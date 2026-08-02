@@ -173,6 +173,8 @@ export type Database = {
           gm_notes: string
           goals: string
           id: string
+          intro: string
+          intro_published: boolean
           number: number
           recap: string
           recap_published: boolean
@@ -188,6 +190,8 @@ export type Database = {
           gm_notes?: string
           goals?: string
           id?: string
+          intro?: string
+          intro_published?: boolean
           number: number
           recap?: string
           recap_published?: boolean
@@ -203,6 +207,8 @@ export type Database = {
           gm_notes?: string
           goals?: string
           id?: string
+          intro?: string
+          intro_published?: boolean
           number?: number
           recap?: string
           recap_published?: boolean
