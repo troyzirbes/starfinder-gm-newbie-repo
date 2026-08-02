@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -7,6 +7,7 @@ import {
   Copy,
   ExternalLink,
   Flag,
+  LayoutGrid,
   Loader2,
   Plus,
   Trash2,
@@ -16,10 +17,13 @@ import { AutoField } from "@/components/campaign/AutoField";
 import { CardEditor } from "@/components/campaign/CardEditor";
 import { CheatSheet } from "@/components/campaign/CheatSheet";
 import { InitiativeTracker } from "@/components/campaign/InitiativeTracker";
+import { PlayerBoardView } from "@/components/campaign/PlayerBoardView";
 import { RevealToggle } from "@/components/campaign/RevealToggle";
+import { RosterPanel } from "@/components/campaign/RosterPanel";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { claimCampaignFn, getPlayerSimulationFn } from "@/lib/account.functions";
 import {
   deleteRowFn,
   getGmViewFn,
