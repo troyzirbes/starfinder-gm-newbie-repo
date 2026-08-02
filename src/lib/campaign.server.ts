@@ -173,7 +173,12 @@ export type PlayerCard = {
 export async function getPlayerView(token: string) {
   const campaign = await campaignBy("player_token", token);
   if (!campaign) return null;
+  return buildPlayerView(campaign);
+}
+
+export async function buildPlayerView(campaign: CampaignRow) {
   const { sessions, milestones, cards } = await loadAll(campaign.id);
+
 
   const visibleCards: PlayerCard[] = cards
     .filter((c) => c.reveal_state !== "hidden")
