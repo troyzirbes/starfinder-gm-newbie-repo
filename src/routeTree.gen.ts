@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as GmTokenRouteImport } from './routes/gm.$token'
 import { Route as PlayTokenRouteImport } from './routes/play.$token'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GmTokenRoute = GmTokenRouteImport.update({
@@ -31,30 +37,34 @@ const PlayTokenRoute = PlayTokenRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/gm/$token': typeof GmTokenRoute
   '/play/$token': typeof PlayTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/gm/$token': typeof GmTokenRoute
   '/play/$token': typeof PlayTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/gm/$token': typeof GmTokenRoute
   '/play/$token': typeof PlayTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/gm/$token' | '/play/$token'
+  fullPaths: '/' | '/auth' | '/gm/$token' | '/play/$token'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/gm/$token' | '/play/$token'
-  id: '__root__' | '/' | '/gm/$token' | '/play/$token'
+  to: '/' | '/auth' | '/gm/$token' | '/play/$token'
+  id: '__root__' | '/' | '/auth' | '/gm/$token' | '/play/$token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
   GmTokenRoute: typeof GmTokenRoute
   PlayTokenRoute: typeof PlayTokenRoute
 }
@@ -66,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gm/$token': {
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
   GmTokenRoute: GmTokenRoute,
   PlayTokenRoute: PlayTokenRoute,
 }
