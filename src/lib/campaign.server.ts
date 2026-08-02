@@ -64,6 +64,7 @@ export type CampaignRow = {
   system: string;
   gm_token: string;
   player_token: string;
+  owner_id: string | null;
 };
 
 const ALPHABET = "abcdefghijkmnpqrstuvwxyz23456789";
@@ -80,13 +81,13 @@ function tableFor(kind: "session" | "milestone" | "card") {
   return kind === "session" ? "sessions" : kind === "milestone" ? "milestones" : "cards";
 }
 
-export async function createCampaign(name: string) {
+export async function createCampaign(name: string, ownerId: string) {
   const gm_token = makeToken();
   const player_token = makeToken();
 
   const { data, error } = await supabaseAdmin
     .from("campaigns")
-    .insert({ name: name.trim() || "Untitled Operation", gm_token, player_token })
+    .insert({ name: name.trim() || "Untitled Operation", gm_token, player_token, owner_id: ownerId })
     .select("*")
     .single();
   if (error) throw new Error(error.message);
@@ -114,7 +115,7 @@ export async function createCampaign(name: string) {
   return { gmToken: campaign.gm_token, playerToken: campaign.player_token };
 }
 
-async function campaignBy(column: "gm_token" | "player_token", token: string) {
+export async function campaignBy(column: "gm_token" | "player_token", token: string) {
   const { data, error } = await supabaseAdmin
     .from("campaigns")
     .select("*")
@@ -172,7 +173,12 @@ export type PlayerCard = {
 export async function getPlayerView(token: string) {
   const campaign = await campaignBy("player_token", token);
   if (!campaign) return null;
+  return buildPlayerView(campaign);
+}
+
+export async function buildPlayerView(campaign: CampaignRow) {
   const { sessions, milestones, cards } = await loadAll(campaign.id);
+
 
   const visibleCards: PlayerCard[] = cards
     .filter((c) => c.reveal_state !== "hidden")

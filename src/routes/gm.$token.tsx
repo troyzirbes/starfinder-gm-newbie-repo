@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -7,6 +7,7 @@ import {
   Copy,
   ExternalLink,
   Flag,
+  LayoutGrid,
   Loader2,
   Plus,
   Trash2,
@@ -16,10 +17,13 @@ import { AutoField } from "@/components/campaign/AutoField";
 import { CardEditor } from "@/components/campaign/CardEditor";
 import { CheatSheet } from "@/components/campaign/CheatSheet";
 import { InitiativeTracker } from "@/components/campaign/InitiativeTracker";
+import { PlayerBoardView } from "@/components/campaign/PlayerBoardView";
 import { RevealToggle } from "@/components/campaign/RevealToggle";
+import { RosterPanel } from "@/components/campaign/RosterPanel";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { claimCampaignFn, getPlayerSimulationFn } from "@/lib/account.functions";
 import {
   deleteRowFn,
   getGmViewFn,
@@ -86,11 +90,24 @@ function GmDesk() {
   const insert = useServerFn(insertRowFn);
   const remove = useServerFn(deleteRowFn);
   const rename = useServerFn(renameCampaignFn);
+  const claim = useServerFn(claimCampaignFn);
+  const simulate = useServerFn(getPlayerSimulationFn);
 
   const key = ["gm", token];
   const { data, isLoading } = useQuery({
     queryKey: key,
     queryFn: () => getView({ data: { token } }),
+  });
+
+  // First GM to open a link while signed in owns the campaign.
+  useEffect(() => {
+    claim({ data: { token } }).catch(() => {});
+  }, [claim, token]);
+
+  const { data: simulation } = useQuery({
+    queryKey: ["simulate", token],
+    queryFn: () => simulate({ data: { token } }),
+    refetchInterval: 8000,
   });
 
   const invalidate = () => qc.invalidateQueries({ queryKey: key });
@@ -173,7 +190,15 @@ function GmDesk() {
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-64 flex-1">
-          <span className="label-eyebrow text-primary">Game Master desk · Starfinder 2e</span>
+          <Link
+            to="/campaigns"
+            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+          >
+            <LayoutGrid className="size-3.5" /> All campaigns
+          </Link>
+          <span className="label-eyebrow mt-1 block text-primary">
+            Game Master desk · Starfinder 2e
+          </span>
           <AutoField
             className="mt-1"
             value={campaign.name}
@@ -192,8 +217,29 @@ function GmDesk() {
           <TabsTrigger value="milestones">Milestones</TabsTrigger>
           <TabsTrigger value="cards">Cards ({cards.length})</TabsTrigger>
           <TabsTrigger value="table">At the table</TabsTrigger>
+          <TabsTrigger value="players">Players</TabsTrigger>
+          <TabsTrigger value="preview">Player view</TabsTrigger>
           <TabsTrigger value="rules">Rules</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="players" className="mt-5">
+          <RosterPanel token={token} />
+        </TabsContent>
+
+        <TabsContent value="preview" className="mt-5">
+          <p className="panel mb-4 p-3 text-xs text-muted-foreground">
+            Exactly what an invited player sees right now — hidden content never reaches this
+            view. Refreshes on its own every few seconds.
+          </p>
+          {simulation ? (
+            <PlayerBoardView data={simulation} />
+          ) : (
+            <div className="flex justify-center py-12">
+              <Loader2 className="size-5 animate-spin text-primary" />
+            </div>
+          )}
+        </TabsContent>
+
 
         <TabsContent value="sessions" className="mt-5 space-y-4">
           {sessions.map((s: SessionRow) => (
