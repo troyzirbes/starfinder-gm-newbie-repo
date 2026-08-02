@@ -56,11 +56,27 @@ const features = [
 function Index() {
   const navigate = useNavigate();
   const create = useServerFn(createCampaignFn);
+  const { signedIn, loading } = useAuth();
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
+  // Google OAuth returns to the origin; finish the hop the user started.
+  useEffect(() => {
+    if (!signedIn) return;
+    const next = sessionStorage.getItem("post_auth_next");
+    if (next && next.startsWith("/") && !next.startsWith("//")) {
+      sessionStorage.removeItem("post_auth_next");
+      navigate({ to: next, replace: true });
+    }
+  }, [signedIn, navigate]);
+
   async function start() {
+    if (!signedIn) {
+      sessionStorage.setItem("post_auth_next", "/campaigns");
+      navigate({ to: "/auth", search: { next: "/campaigns" } });
+      return;
+    }
     setBusy(true);
     setError("");
     try {
@@ -74,10 +90,26 @@ function Index() {
 
   return (
     <main className="mx-auto max-w-5xl px-5 py-14 sm:py-20">
-      <div className="flex items-center gap-2 text-primary">
-        <Rocket className="size-5" />
-        <span className="label-eyebrow text-primary">Starfinder 2e · Game Master Hub</span>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2 text-primary">
+          <Rocket className="size-5" />
+          <span className="label-eyebrow text-primary">Starfinder 2e · Game Master Hub</span>
+        </div>
+        {loading ? null : signedIn ? (
+          <Link to="/campaigns">
+            <Button size="sm" variant="secondary">
+              My campaigns
+            </Button>
+          </Link>
+        ) : (
+          <Link to="/auth" search={{ next: "/campaigns" }}>
+            <Button size="sm" variant="secondary">
+              Sign in
+            </Button>
+          </Link>
+        )}
       </div>
+
 
       <h1 className="mt-5 max-w-3xl text-4xl leading-tight font-semibold sm:text-5xl">
         Run your first five sessions without holding it all in your head.
