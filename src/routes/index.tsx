@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Compass, Eye, Loader2, Rocket, ScrollText, SplitSquareHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/hooks/useAuth";
 import { createCampaignFn } from "@/lib/campaign.functions";
 
 export const Route = createFileRoute("/")({
