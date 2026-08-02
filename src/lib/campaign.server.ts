@@ -115,7 +115,7 @@ export async function createCampaign(name: string) {
   return { gmToken: campaign.gm_token, playerToken: campaign.player_token };
 }
 
-async function campaignBy(column: "gm_token" | "player_token", token: string) {
+export async function campaignBy(column: "gm_token" | "player_token", token: string) {
   const { data, error } = await supabaseAdmin
     .from("campaigns")
     .select("*")
