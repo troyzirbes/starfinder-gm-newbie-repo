@@ -59,7 +59,7 @@ function PlayerBoard() {
     );
   }
 
-  const { campaign, cards, milestones, recaps } = data;
+  const { campaign, cards, milestones, recaps, intros } = data;
   const grouped = cardTypeOrder
     .map((t) => ({ type: t, items: cards.filter((c) => c.type === t) }))
     .filter((g) => g.items.length > 0);
