@@ -35,6 +35,8 @@ export type SessionRow = {
   campaign_id: string;
   number: number;
   title: string;
+  intro: string;
+  intro_published: boolean;
   goals: string;
   scenes: string;
   fallbacks: string;
@@ -202,6 +204,9 @@ export async function getPlayerView(token: string) {
         achieved: m.achieved,
         order_index: m.order_index,
       })),
+    intros: sessions
+      .filter((s) => s.intro_published && (s.intro ?? "").trim())
+      .map((s) => ({ id: s.id, number: s.number, title: s.title, intro: s.intro })),
     recaps: sessions
       .filter((s) => s.recap_published && s.recap.trim())
       .map((s) => ({ id: s.id, number: s.number, title: s.title, recap: s.recap })),
@@ -215,7 +220,18 @@ export async function requireCampaign(gmToken: string) {
 }
 
 const ALLOWED: Record<string, string[]> = {
-  sessions: ["title", "goals", "scenes", "fallbacks", "gm_notes", "recap", "recap_published", "status"],
+  sessions: [
+    "title",
+    "intro",
+    "intro_published",
+    "goals",
+    "scenes",
+    "fallbacks",
+    "gm_notes",
+    "recap",
+    "recap_published",
+    "status",
+  ],
   milestones: ["title", "description", "gm_notes", "order_index", "achieved", "session_number", "visible_to_players"],
   cards: [
     "type",
