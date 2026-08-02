@@ -36,8 +36,11 @@ function Campaigns() {
   const navigate = useNavigate();
   const list = useServerFn(listMyCampaignsFn);
   const create = useServerFn(createCampaignFn);
+  const claim = useServerFn(claimCampaignFn);
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
+  const [claimLink, setClaimLink] = useState("");
+  const [claimNote, setClaimNote] = useState("");
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["my-campaigns"],
@@ -55,6 +58,28 @@ function Campaigns() {
       refetch();
     }
   }
+
+  async function claimByLink() {
+    const token = claimLink.trim().split("/").pop() ?? "";
+    if (token.length < 6) {
+      setClaimNote("That doesn't look like a GM link.");
+      return;
+    }
+    setClaimNote("");
+    try {
+      const res = await claim({ data: { token } });
+      if (res.ok && res.owned) {
+        setClaimLink("");
+        setClaimNote("Added to your list.");
+        refetch();
+      } else {
+        setClaimNote("That campaign already belongs to another account.");
+      }
+    } catch {
+      setClaimNote("Couldn't find a campaign for that link.");
+    }
+  }
+
 
   async function signOut() {
     await supabase.auth.signOut();
