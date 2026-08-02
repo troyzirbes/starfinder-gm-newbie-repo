@@ -138,8 +138,8 @@ function Index() {
           </Button>
         </div>
         <p className="mt-3 text-xs text-muted-foreground">
-          No sign-up. You get one private GM link and one shareable player link — bookmark the GM
-          link, it's the only way back in.
+          You'll sign in first, then invite your players by email — each of them sees only the
+          player board, and only for the campaigns you add them to.
         </p>
         {error ? <p className="mt-2 text-xs text-destructive">{error}</p> : null}
       </div>
