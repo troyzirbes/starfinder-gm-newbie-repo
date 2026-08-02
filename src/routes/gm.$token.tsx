@@ -90,11 +90,24 @@ function GmDesk() {
   const insert = useServerFn(insertRowFn);
   const remove = useServerFn(deleteRowFn);
   const rename = useServerFn(renameCampaignFn);
+  const claim = useServerFn(claimCampaignFn);
+  const simulate = useServerFn(getPlayerSimulationFn);
 
   const key = ["gm", token];
   const { data, isLoading } = useQuery({
     queryKey: key,
     queryFn: () => getView({ data: { token } }),
+  });
+
+  // First GM to open a link while signed in owns the campaign.
+  useEffect(() => {
+    claim({ data: { token } }).catch(() => {});
+  }, [claim, token]);
+
+  const { data: simulation } = useQuery({
+    queryKey: ["simulate", token],
+    queryFn: () => simulate({ data: { token } }),
+    refetchInterval: 8000,
   });
 
   const invalidate = () => qc.invalidateQueries({ queryKey: key });
