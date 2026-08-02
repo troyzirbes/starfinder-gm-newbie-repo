@@ -173,7 +173,7 @@ export async function listRoster(userId: string, gmToken: string): Promise<Membe
       role: m.role,
       since: m.created_at,
     })),
-    ...((invites ?? []) as { id: string; email: string; created_at }[]).map((i) => ({
+    ...((invites ?? []) as { id: string; email: string; created_at: string }[]).map((i) => ({
       kind: "invite" as const,
       id: i.id,
       email: i.email,
