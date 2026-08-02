@@ -1,27 +1,26 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+
 import {
   createCampaign,
   deleteRow,
   getGmView,
-  getPlayerView,
   insertRow,
   renameCampaign,
   updateRow,
 } from "./campaign.server";
 
 export const createCampaignFn = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ name: z.string().max(120) }).parse(d))
-  .handler(async ({ data }) => createCampaign(data.name));
+  .handler(async ({ data, context }) => createCampaign(data.name, context.userId));
 
 export const getGmViewFn = createServerFn({ method: "GET" })
   .inputValidator((d: unknown) => z.object({ token: z.string().min(6).max(64) }).parse(d))
   .handler(async ({ data }) => getGmView(data.token));
 
-export const getPlayerViewFn = createServerFn({ method: "GET" })
-  .inputValidator((d: unknown) => z.object({ token: z.string().min(6).max(64) }).parse(d))
-  .handler(async ({ data }) => getPlayerView(data.token));
 
 export const updateRowFn = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
