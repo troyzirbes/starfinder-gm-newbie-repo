@@ -64,6 +64,7 @@ export type CampaignRow = {
   system: string;
   gm_token: string;
   player_token: string;
+  owner_id: string | null;
 };
 
 const ALPHABET = "abcdefghijkmnpqrstuvwxyz23456789";
