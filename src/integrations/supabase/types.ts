@@ -14,12 +14,86 @@ export type Database = {
   }
   public: {
     Tables: {
+      campaign_invites: {
+        Row: {
+          accepted_at: string | null
+          campaign_id: string
+          created_at: string
+          email: string
+          id: string
+          invited_by: string | null
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          campaign_id: string
+          created_at?: string
+          email: string
+          id?: string
+          invited_by?: string | null
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          campaign_id?: string
+          created_at?: string
+          email?: string
+          id?: string
+          invited_by?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_invites_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaign_members: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          id: string
+          role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          id?: string
+          role?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          id?: string
+          role?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_members_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campaigns: {
         Row: {
           created_at: string
           gm_token: string
           id: string
           name: string
+          owner_id: string | null
           player_token: string
           system: string
           updated_at: string
@@ -29,6 +103,7 @@ export type Database = {
           gm_token: string
           id?: string
           name: string
+          owner_id?: string | null
           player_token: string
           system?: string
           updated_at?: string
@@ -38,6 +113,7 @@ export type Database = {
           gm_token?: string
           id?: string
           name?: string
+          owner_id?: string | null
           player_token?: string
           system?: string
           updated_at?: string
@@ -164,6 +240,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string
+          email: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string
+          email?: string
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string
+          email?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       sessions: {
         Row: {
