@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GmTokenRouteImport } from './routes/gm.$token'
+import { Route as PlayTokenRouteImport } from './routes/play.$token'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GmTokenRoute = GmTokenRouteImport.update({
+  id: '/gm/$token',
+  path: '/gm/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlayTokenRoute = PlayTokenRouteImport.update({
+  id: '/play/$token',
+  path: '/play/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/gm/$token': typeof GmTokenRoute
+  '/play/$token': typeof PlayTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/gm/$token': typeof GmTokenRoute
+  '/play/$token': typeof PlayTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/gm/$token': typeof GmTokenRoute
+  '/play/$token': typeof PlayTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/gm/$token' | '/play/$token'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/gm/$token' | '/play/$token'
+  id: '__root__' | '/' | '/gm/$token' | '/play/$token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  GmTokenRoute: typeof GmTokenRoute
+  PlayTokenRoute: typeof PlayTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,22 +68,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/gm/$token': {
+      id: '/gm/$token'
+      path: '/gm/$token'
+      fullPath: '/gm/$token'
+      preLoaderRoute: typeof GmTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/play/$token': {
+      id: '/play/$token'
+      path: '/play/$token'
+      fullPath: '/play/$token'
+      preLoaderRoute: typeof PlayTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  GmTokenRoute: GmTokenRoute,
+  PlayTokenRoute: PlayTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
