@@ -34,11 +34,11 @@ export function CardEditor({ card, onClose, onPatch, onDelete }: Props) {
   return (
     <Sheet open onOpenChange={(o) => !o && onClose()}>
       <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-xl">
-        <SheetHeader className="px-5">
+        <SheetHeader>
           <SheetTitle className="text-base">Edit card</SheetTitle>
         </SheetHeader>
 
-        <div className="space-y-5 px-5 pb-10">
+        <div className="space-y-5 pb-10">
           <div className="flex flex-wrap items-center gap-2">
             <Select value={card.type} onValueChange={(v) => patch({ type: v as CardType })}>
               <SelectTrigger className="w-44 bg-background/60">
