@@ -95,12 +95,31 @@ function AuthPage() {
 
   async function google() {
     setError("");
-    sessionStorage.setItem("post_auth_next", next);
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
-    });
-    if (result.error) setError("Google sign-in didn't complete. Try again.");
+    setBusy(true);
+    try {
+      sessionStorage.setItem("post_auth_next", next);
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+      });
+      console.info("[google-signin]", result);
+      if (result.error) {
+        setError(
+          result.error instanceof Error
+            ? `Google sign-in failed: ${result.error.message}`
+            : "Google sign-in didn't complete. Try again.",
+        );
+      }
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? `Google sign-in failed: ${err.message}`
+          : "Google sign-in didn't complete. Try again.",
+      );
+    } finally {
+      setBusy(false);
+    }
   }
+
 
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-5 py-16">
